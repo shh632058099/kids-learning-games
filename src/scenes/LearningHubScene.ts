@@ -12,6 +12,7 @@ export class LearningHubScene extends Phaser.Scene {
   private cards: LearningCard[] = []
   private selectedIndex = 0
   private cleanupInput: (() => void) | null = null
+  private hanziOverlayOpen = false
 
   constructor() {
     super({ key: 'LearningHubScene' })
@@ -50,10 +51,16 @@ export class LearningHubScene extends Phaser.Scene {
     })
 
     this.cleanupInput = inputManager.onInput((action) => this.handleInput(action))
+    const closeHanzi = () => {
+      this.hanziOverlayOpen = false
+      inputManager.setControlProfile(CONTROL_PROFILES.navigation)
+    }
+    window.addEventListener('xingya:close-hanzi', closeHanzi)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       inputManager.setControlProfile(null)
       this.cleanupInput?.()
       this.cleanupInput = null
+      window.removeEventListener('xingya:close-hanzi', closeHanzi)
     })
     this.updateSelection(0)
     this.cameras.main.fadeIn(220)
@@ -109,7 +116,10 @@ export class LearningHubScene extends Phaser.Scene {
       wordWrap: { width: 240 },
       align: 'center',
     }).setOrigin(0.5)
-    this.add.text(x, y + 76, `每轮随机 ${module.sessionQuestions} 题 · 题库 ${module.questions.length}+`, {
+    const detail = moduleId === 'hanzi'
+      ? '1200+ 汉字 · 笔顺/跟写/听辨'
+      : `每轮随机 ${module.sessionQuestions} 题 · 题库 ${module.questions.length}+`
+    this.add.text(x, y + 76, detail, {
       fontSize: '15px',
       color: module.accentHex,
       fontFamily: 'PingFang SC, Microsoft YaHei, sans-serif',
@@ -123,6 +133,7 @@ export class LearningHubScene extends Phaser.Scene {
   }
 
   private handleInput(action: GameAction) {
+    if (this.hanziOverlayOpen) return
     if (action === GameAction.BACK) {
       this.returnToMap()
       return
@@ -151,6 +162,12 @@ export class LearningHubScene extends Phaser.Scene {
   }
 
   private startModule(moduleId: LearningModuleId) {
+    if (moduleId === 'hanzi') {
+      this.hanziOverlayOpen = true
+      inputManager.setControlProfile(null)
+      window.dispatchEvent(new CustomEvent('xingya:open-hanzi'))
+      return
+    }
     this.scene.start('LearningQuestScene', { moduleId })
   }
 

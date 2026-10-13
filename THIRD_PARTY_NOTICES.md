@@ -38,6 +38,32 @@ input integration.
 - Source: https://github.com/mrdoob/three.js
 - License: MIT
 
+## hanzi-study
+
+The offline Hanzi learning module under `public/hanzi-study/` is adapted from
+`dhjz/hanzi-study`. It provides the Hanzi list and learning flow, including
+pronunciation, word/example-sentence cards, stroke-order practice, listening
+quizzes, unit tests, and local progress tracking.
+
+- Source: https://github.com/dhjz/hanzi-study
+- License: MIT
+- Copyright: Copyright (c) 2026 dhjz
+- Local license: `public/hanzi-study/LICENSE`
+
+The imported module also contains Hanzi Writer v3.0.3, as distributed by the
+upstream project.
+
+- Hanzi Writer source: https://github.com/chanind/hanzi-writer
+- Hanzi Writer license: MIT
+- Local Hanzi Writer license: public/hanzi-study/HANZI_WRITER_LICENSE.txt
+
+The offline stroke-order data is derived from Hanzi Writer Data / Make Me A Hanzi
+and is distributed under the Arphic Public License.
+
+- Hanzi Writer Data source: https://github.com/chanind/hanzi-writer-data
+- Data license: Arphic Public License
+- Local data license: public/hanzi-study/ARPHICPL.TXT
+
 ## Design References
 
 The implementation uses original project code. The following public projects

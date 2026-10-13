@@ -250,3 +250,47 @@ canvas {
 .virtual-controls--touch:not(.virtual-controls--none) .control-guide {
   display: none;
 }
+
+.hanzi-study-overlay { position: fixed; inset: 0; z-index: 100; overflow: auto; padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left)); background: radial-gradient(circle at 10% 10%, rgba(255,215,64,.42), transparent 24%), radial-gradient(circle at 92% 18%, rgba(105,240,174,.34), transparent 22%), #FFF8E1; color: #314B59; touch-action: pan-y; user-select: none; }
+.hanzi-study-shell { width: min(1180px, 100%); min-height: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+.hanzi-study-header, .hanzi-study-footer, .hanzi-grid-panel, .hanzi-learning-panel { border: 2px solid rgba(63,141,227,.18); background: rgba(255,255,255,.94); box-shadow: 0 10px 28px rgba(92,75,42,.10); }
+.hanzi-study-header { min-height: 92px; border-radius: 28px; padding: 14px 20px; display: grid; grid-template-columns: 180px 1fr 220px; align-items: center; gap: 12px; }
+.hanzi-study-header h1 { margin: 0; font-size: clamp(28px,4vw,42px); color: #3F8DE3; text-align: center; }
+.hanzi-study-header p { margin-top: 3px; color: #718592; text-align: center; font-weight: 700; }
+.hanzi-icon-button, .hanzi-progress-pill, .hanzi-mode-tabs button, .hanzi-page-controls button, .hanzi-navigation button, .hanzi-study-footer button, .hanzi-secondary-button { border: 0; border-radius: 16px; padding: 11px 15px; background: #EEF6FF; color: #31566A; font-weight: 800; cursor: pointer; }
+.hanzi-progress-pill { text-align: center; background: #E7F8ED; color: #2F8751; }
+.hanzi-study-main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(330px,.78fr) minmax(430px,1.22fr); gap: 14px; }
+.hanzi-grid-panel, .hanzi-learning-panel { border-radius: 28px; padding: 18px; }
+.hanzi-grid-toolbar, .hanzi-page-controls, .hanzi-navigation, .hanzi-study-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.hanzi-grid-toolbar { margin-bottom: 12px; color: #527485; }
+.hanzi-grid { display: grid; grid-template-columns: repeat(10,minmax(0,1fr)); gap: 7px; }
+.hanzi-grid-item { position: relative; aspect-ratio: 1; min-width: 0; border: 2px solid #DCE9F0; border-radius: 13px; background: #FFF; color: #31566A; font-size: clamp(20px,2.3vw,30px); font-weight: 900; cursor: pointer; }
+.hanzi-grid-item.selected { border-color: #3F8DE3; background: #EAF4FF; transform: scale(1.05); }
+.hanzi-grid-item.locked { color: #9AA9B1; background: #F4F6F7; }
+.hanzi-grid-item.mastered:not(.locked) { border-color: #9BD4AE; background: #F0FBF3; }
+.hanzi-grid-item.needs-review:not(.locked) { border-color: #F1B36E; box-shadow: inset 0 0 0 2px rgba(241,179,110,.16); }
+.hanzi-grid-item small { position: absolute; right: 2px; bottom: 1px; font-size: 9px; }
+.hanzi-page-controls { margin-top: 12px; justify-content: center; }
+.hanzi-mode-tabs { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
+.hanzi-mode-tabs button.active { background: #3F8DE3; color: #FFF; }
+.hanzi-mode-tabs button:disabled { opacity: .42; cursor: not-allowed; }
+.hanzi-card-view, .hanzi-practice-view, .hanzi-loading { min-height: 470px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 13px; text-align: center; }
+.hanzi-big-character { width: 190px; height: 190px; border: 4px solid #BBD9F7; border-radius: 36px; background: linear-gradient(45deg,transparent 49.5%,#E3EDF2 49.5%,#E3EDF2 50.5%,transparent 50.5%), linear-gradient(-45deg,transparent 49.5%,#E3EDF2 49.5%,#E3EDF2 50.5%,transparent 50.5%), #FFF; color: #31566A; font-size: 126px; line-height: 1; font-family: 'KaiTi','STKaiti','PingFang SC',serif; cursor: pointer; }
+.hanzi-pinyin { font-size: 30px; color: #D7567F; font-weight: 800; }
+.hanzi-word, .hanzi-sentence { width: min(620px,94%); border-radius: 16px; padding: 12px 16px; background: #FFF9EC; font-size: 20px; }
+.hanzi-word span, .hanzi-sentence span { display: inline-block; margin-right: 12px; color: #8B6B48; font-size: 14px; font-weight: 900; }
+.hanzi-primary-button, .hanzi-listen-button { border: 0; border-radius: 18px; padding: 13px 22px; background: #3F8DE3; color: #FFF; font-size: 17px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 14px rgba(63,141,227,.22); }
+.hanzi-stage-button { border: 0; border-radius: 18px; padding: 13px 22px; background: #45A86B; color: #FFF; font-size: 17px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 14px rgba(69,168,107,.2); }
+.hanzi-stage-hint { flex: 1; min-width: 180px; text-align: center; color: #6D7E87; font-size: 14px; font-weight: 800; }
+.hanzi-write-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.hanzi-listen-button { background: #D7567F; }
+.hanzi-choice-grid { width: min(580px,96%); display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+.hanzi-choice-grid button { min-height: 110px; border: 3px solid #D9E8EF; border-radius: 24px; background: #FFF; color: #31566A; font-size: 52px; font-weight: 900; cursor: pointer; }
+.hanzi-writer-target { width: 264px; height: 264px; border: 2px solid #D8E5EA; border-radius: 24px; overflow: hidden; background: linear-gradient(90deg,transparent 49.7%,#E5EDF1 49.7%,#E5EDF1 50.3%,transparent 50.3%), linear-gradient(transparent 49.7%,#E5EDF1 49.7%,#E5EDF1 50.3%,transparent 50.3%), #FFF; }
+.hanzi-write-status, .hanzi-feedback, .hanzi-test-badge { min-height: 28px; color: #527485; font-weight: 800; }
+.hanzi-test-badge { min-height: auto; border-radius: 999px; padding: 8px 14px; background: #FFF0D8; color: #B96D17; }
+.hanzi-navigation { border-top: 1px solid #E7EEF1; padding-top: 12px; }
+.hanzi-navigation button:disabled, .hanzi-page-controls button:disabled { opacity: .35; cursor: default; }
+.hanzi-study-footer { min-height: 52px; border-radius: 20px; padding: 9px 16px; color: #718592; font-size: 13px; }
+@media (max-width: 900px), (orientation: portrait) { .hanzi-study-header { grid-template-columns: auto 1fr; } .hanzi-progress-pill { grid-column: 1 / -1; } .hanzi-study-main { grid-template-columns: 1fr; } .hanzi-grid { grid-template-columns: repeat(8,minmax(0,1fr)); } .hanzi-card-view, .hanzi-practice-view, .hanzi-loading { min-height: 420px; } }
+@media (max-width: 560px) { .hanzi-study-overlay { padding: 8px; } .hanzi-study-header { padding: 10px; } .hanzi-study-header h1 { font-size: 27px; } .hanzi-study-header p { display: none; } .hanzi-grid { grid-template-columns: repeat(6,minmax(0,1fr)); } .hanzi-grid-panel, .hanzi-learning-panel { padding: 12px; border-radius: 20px; } .hanzi-big-character { width: 160px; height: 160px; font-size: 106px; } .hanzi-choice-grid button { min-height: 88px; font-size: 42px; } .hanzi-study-footer span { display: none; } }

@@ -24,7 +24,9 @@
     "test:generators": "node --experimental-strip-types --experimental-specifier-resolution=node scripts/verify-generators.ts",
     "test:learning": "node --experimental-strip-types --experimental-specifier-resolution=node scripts/verify-learning-content.ts",
     "verify:release": "node scripts/verify-release-version.cjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:hanzi": "node scripts/generate-hanzi-study-data.cjs",
+    "test:hanzi": "node scripts/verify-hanzi-study.cjs"
   },
   "dependencies": {
     "@capacitor-community/text-to-speech": "^8.0.2",

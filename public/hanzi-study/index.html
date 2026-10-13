@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <title>星芽汉字乐园</title>
+  <meta name="theme-color" content="#ff6f91">
+  <link rel="apple-touch-icon" href="favicon.ico">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body id="body">
+  <div id="app" class="flex-center" :class="['theme-' + theme]" v-cloak>
+    <div class="body-bg"></div>
+    <div class="container">
+      <button class="back-to-xingya" @click="returnToApp">← 返回星芽奇旅</button>
+      <div class="btn-top btn-theme" @click="changeTheme">🍀</div>
+      <img class="btn-top audio-img" :class="{ off: !bgPlay }" @click="toggleBg" src="img/audio.png" alt="">
+      <div class="btn-top click-read" :class="{ off: !isClickRead }" @click="toggleCr" v-show="hanziShow">👆</div>
+      <div class="go-top" @click="goTop" v-show="hanziShow">🔝</div>
+      <div class="mask flex-center" v-if="notStart">
+        <div>
+          <div><button class="game-button mb10" @click="startApp">开始学习, 当前进度: {{ lockInd }} / {{ list.length }}</button></div>
+          <div class="xingya-hanzi-note">1200+ 汉字 · 点读 · 笔顺 · 跟写 · 听音辨字 · 单元测验</div>
+        </div>
+      </div>
+      <header>
+        <!-- 🐻  -->
+        <h1 class="flex-center" @click="flagClick">星芽汉字乐园</h1>
+        <!-- <p>点击汉字或播放按钮听发音，点击左右箭头切换！</p> -->
+      </header>
+
+      <div id="hanzi-section" v-show="hanziShow">
+        <div class="hanzi-list" id="hanzi-list">
+          <div class="hanzi-item" :class="{locked: lockInd < ind, on: lockInd == ind, tested: item.isTest}" v-for="(item, ind) in list" :key="ind" @click="hanziClick(item, ind)">
+            {{ item.w }}
+          </div>
+        </div>
+      </div>
+
+      <main id="learning-section" v-show="cardShow">
+        <div class="character-display" v-if="currItem">
+          <!-- <button id="prevChar" class="nav-button">&lt;</button> -->
+          <div class="char-card">
+            <div id="character" class="big-char" @click="readItem(currItem, true)">{{ currItem.w }}</div>
+            <div id="pinyin" class="pinyin" @click="readItem(currItem, true)">{{ currItem.y }}</div>
+            <div id="meaning" class="meaning">{{ currItem.p }}</div>
+            <button @click="readItem(currItem)" class="play-button">▶️ 听发音</button>
+          </div>
+          <!-- <button id="nextChar" class="nav-button">&gt;</button> -->
+        </div>
+        <p class="instructions" v-if="currItem" @click="speakText(currItem.s)">▶️ 句子：{{ currItem.s }}</p> <!-- 点击开始游戏，巩固学习！ -->
+        <div class="game-selection mb15">
+          <button class="game-button" :class="[gameStep.includes(1) && 'own']" @click="goGame('stroke')">🖋️ 1. 书写笔画</button>
+          <button class="game-button" :class="[gameStep.includes(2) && 'own']" @click="goGame('listen')">👂 2. 听音辨字</button>
+          <button class="game-button" :class="[gameStep.includes(3) && 'own']" @click="goGame('draw')">🧩 3. 画一画吧 </button>
+          <!-- <button class="game-button" data-game="char_meaning">💡 认字识意</button> -->
+          <!-- <button class="game-button" data-game="pinyin_match">🧩 拼音匹配</button> -->
+        </div>
+        <div class="game-actions">
+          <button @click="goBack(1)" class="action-button"><span>👈</span> 返回列表</button>
+        </div>
+      </main>
+
+      <section id="game-section" v-show="gameShow">
+        <h2>游戏时间！🥳</h2>
+        <div id="game-content">
+          <div v-show="gameType === 'listen'">
+            <p class="question-text"><span @click="readItem(currItem, true)">🔊</span>听声音，选择正确的汉字：</p>
+            <div class="options-grid">
+              <button class="option-button" :class="[item.status]" v-for="(item, ind) in randomList" :key="ind" @click="listenClick(item)">
+                {{ item.w }}
+              </button>
+            </div>
+          </div>
+          <div v-show="gameType === 'stroke'" class="text-center mb15" id="stroke-list"></div>
+          <div v-show="gameType === 'stroke'" class="flex ai-c jc-sa w100">
+            <div id="stroke-ani" clas="stroke-box"></div>
+            <div id="stroke-write"  clas="stroke-box"></div>
+          </div>
+          <div v-show="gameType === 'draw'" class="flex-center draw-wrap">
+            <div class="draw-box">
+              <img :src="drawImg" ><span :class="[drawType]" :style="{ background: drawColor, '--p-done':  `${drawStatus}%`, '--p-not': `${100 - drawStatus}%`, '--d-done':  `${drawStatus / 100}`, '--d-not': `${1 - drawStatus / 100}`}"></span>
+            </div>
+            <div class="flex-col jc-sa">
+              <button class="option-button" :class="[item.status]" v-for="(item, ind) in randomList" :key="ind" @click="drawClick(item)">
+                {{ item.w }}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="game-feedback">
+          <div v-if="gameStatus">
+            <span id="feedback-icon">{{ gameStatus === 'correct' ? '✅' : '❌' }}</span>
+            <span id="feedback-text">{{ gameStatus === 'correct' ? '太棒了！' : '再试一次哦！' }}</span>
+          </div>
+          <div v-if="strokeStatus">
+            <span id="feedback-text"><span v-if="strokeStatus[0] == strokeStatus[1]">✅</span>
+              完成了 <b>{{ strokeStatus[0] }}</b> / {{ strokeStatus[1] }} 个笔画</span>
+          </div>
+        </div>
+        <div class="game-actions">
+          <button id="nextQuestion" class="action-button hidden">下一题</button>
+          <button @click="goBack(2)" class="action-button"><span>👈</span> 返回学习</button>
+        </div>
+      </section>
+
+    </div>
+
+    <audio id="audioBg" src="audio/bg1.mp3"></audio>
+    <audio id="correctSound" src="audio/correct.mp3"></audio> <!-- 成功音效 -->
+    <audio id="wrongSound" src="audio/wrong.mp3"></audio> <!-- 失败音效 -->
+  </div>
+
+  <script src="js/lib/hanzi-writer.min.js"></script>
+  <script src="js/lib/vue.global.prod.min.js"></script>
+  <script src="js/lib/dataList.js"></script>
+  <!-- <script src="js/lib/dataWriter.js"></script> -->
+  <script src="js/utils.js"></script>
+  <script src="js/index.js"></script>
+</body>
+
+</html>

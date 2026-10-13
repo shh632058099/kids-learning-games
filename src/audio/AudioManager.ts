@@ -132,6 +132,27 @@ export class AudioManager {
     return Boolean(this.synth && typeof SpeechSynthesisUtterance !== 'undefined')
   }
 
+  private async waitForWebSpeechVoices(timeoutMs = 1200) {
+    const synth = this.synth
+    if (!synth) return [] as SpeechSynthesisVoice[]
+    const current = synth.getVoices()
+    if (current.length > 0) return current
+
+    return await new Promise<SpeechSynthesisVoice[]>((resolve) => {
+      let settled = false
+      const finish = () => {
+        if (settled) return
+        settled = true
+        window.clearTimeout(timer)
+        synth.removeEventListener('voiceschanged', onVoicesChanged)
+        resolve(synth.getVoices())
+      }
+      const onVoicesChanged = () => finish()
+      const timer = window.setTimeout(finish, timeoutMs)
+      synth.addEventListener('voiceschanged', onVoicesChanged, { once: true })
+    })
+  }
+
   async startBackgroundMusic() {
     this.musicDesired = true
     if (this.muted || this.volume <= 0 || this.audioSuspended || this.musicTimer !== undefined) return false
@@ -187,10 +208,19 @@ export class AudioManager {
   }
 
   speak(text: string, rate = 0.8, pitch = 1.1, language = 'zh-CN') {
-    if (this.muted || !text.trim()) return
+    if (this.muted || this.volume <= 0 || !text.trim()) return false
     const request = ++this.speechRequest
     this.speaking = true
     void this.speakAsync(request, text, rate, pitch, language)
+    return true
+  }
+
+  isMuted() {
+    return this.muted
+  }
+
+  getVolume() {
+    return this.volume
   }
 
   speakPinyin(pinyin: string) {
@@ -295,12 +325,18 @@ export class AudioManager {
     }
 
     this.synth.cancel()
+    this.synth.resume()
+    const voices = await this.waitForWebSpeechVoices()
+    if (request !== this.speechRequest || this.muted) {
+      if (request === this.speechRequest) this.speaking = false
+      return
+    }
+    await new Promise<void>((resolve) => window.setTimeout(resolve, 0))
     const utterance = new SpeechSynthesisUtterance(text)
     utterance.lang = language
     utterance.rate = rate
     utterance.pitch = pitch
     utterance.volume = this.volume
-    const voices = this.synth.getVoices()
     utterance.voice = voices.find((voice) => voice.lang.toLowerCase() === language.toLowerCase())
       ?? voices.find((voice) => voice.lang.toLowerCase().startsWith(language.split('-')[0].toLowerCase()))
       ?? null

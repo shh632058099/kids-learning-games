@@ -123,7 +123,7 @@ export const LEARNING_MODULES: Record<LearningModuleId, LearningModuleDefinition
     id: 'hanzi',
     shortName: '字',
     name: '汉字小屋',
-    description: '从图片里认识常用汉字',
+    description: '1200+ 汉字，支持点读、笔顺、跟写和听音测验',
     accentColor: 0x3F8DE3,
     accentHex: '#3F8DE3',
     sessionQuestions: 5,
